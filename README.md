@@ -27,3 +27,10 @@ You can connect to the **PostgreSQL database** using the following credentials:
 ```sh
 docker-compose down -v 
 ```
+
+
+Endpoint	Authentication Required?	Description
+POST /auth/login	❌ No	Login and get JWT token
+GET /v1/batch/start	❌ No	Start batch job without authentication
+GET /v1/transactions	✅ Yes	Requires JWT token
+PATCH /v1/transactions/{id}	✅ Yes	Requires JWT token
