@@ -1,5 +1,7 @@
 package net.dzakirin.customer_transaction_service.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.dzakirin.customer_transaction_service.util.TxtToCsvConverter;
 import org.springframework.batch.core.Job;
@@ -15,18 +17,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/v1/batch")
 @RequiredArgsConstructor
+@Tag(name = "Batch Processing", description = "Batch job execution APIs")
 public class BatchController {
 
     private final JobLauncher jobLauncher;
     private final Job job;
 
+    @Operation(summary = "Start Batch Job", description = "Triggers the batch job to process transactions.")
     @GetMapping("/start")
     public ResponseEntity<String> startBatchJob() {
         try {
             TxtToCsvConverter.convertTxtToCsv();
 
             JobParameters jobParameters = new JobParametersBuilder()
-                    // Ensure a new execution every time
                     .addLong("startTime", System.currentTimeMillis())
                     .toJobParameters();
 

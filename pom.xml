@@ -18,7 +18,6 @@
 		<java.version>17</java.version>
 		<openapi.version>1.6.15</openapi.version>
 		<sl4jlocal.version>2.0.16</sl4jlocal.version>
-		<jsonwebtoken.version>0.12.6</jsonwebtoken.version>
 	</properties>
 
 	<dependencies>
@@ -44,8 +43,18 @@
 		</dependency>
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt</artifactId>
-			<version>${jsonwebtoken.version}</version>
+			<artifactId>jjwt-api</artifactId>
+			<version>0.11.5</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.11.5</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>0.11.5</version>
 		</dependency>
 
 		<!-- Documentation Dependencies -->

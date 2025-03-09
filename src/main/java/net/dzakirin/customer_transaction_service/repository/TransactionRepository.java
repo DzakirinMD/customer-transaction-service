@@ -13,9 +13,10 @@ public interface TransactionRepository extends PagingAndSortingRepository<Transa
 
     @Query("""
             SELECT t FROM Transaction t
-            WHERE (:customerId IS NULL OR t.customerId = :customerId)
+            WHERE (:transactionId IS NULL OR t.id = :transactionId)
+            AND (:customerId IS NULL OR t.customerId = :customerId)
             AND (:accountNumber IS NULL OR t.accountNumber LIKE %:accountNumber%)
             AND (:description IS NULL OR t.description LIKE %:description%)
             """)
-    Page<Transaction> searchTransactions(Integer customerId, String accountNumber, String description, Pageable pageable);
+    Page<Transaction> searchTransactions(Long transactionId, Integer customerId, String accountNumber, String description, Pageable pageable);
 }

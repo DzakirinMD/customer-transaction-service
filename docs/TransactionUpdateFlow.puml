@@ -1,0 +1,16 @@
+@startuml
+start
+:User sends PATCH request with updated fields;
+:TransactionController calls TransactionService;
+:TransactionService fetches transaction from TransactionRepository;
+
+if (Transaction exists?) then (Yes)
+    :Update only non-null fields;
+    :Save updated transaction;
+    :Return updated transaction response;
+else (No)
+    :Return 404 Not Found;
+endif
+
+stop
+@enduml

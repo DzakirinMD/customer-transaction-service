@@ -28,6 +28,7 @@ public class TransactionService {
         Pageable pageable = PageRequest.of(request.getPageNumber() - 1, request.getPageSize(), Sort.by(direction, request.getSortField()));
 
         Page<Transaction> transactionsPage = transactionRepository.searchTransactions(
+                request.getTransactionId(),
                 request.getCustomerId(),
                 request.getAccountNumber(),
                 request.getDescription(),
@@ -58,7 +59,7 @@ public class TransactionService {
                 .orElseThrow(() -> new RuntimeException("Transaction not found"));
 
         synchronized (existingTransaction) {
-            existingTransaction.setDescription(request.getDescription().toUpperCase());
+            existingTransaction.setDescription(request.getDescription());
             transactionRepository.save(existingTransaction);
         }
 

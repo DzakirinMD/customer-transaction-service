@@ -12,6 +12,9 @@ import javax.validation.constraints.Min;
 @AllArgsConstructor
 public class SearchTransactionRequest {
 
+    @Schema(description = "Filter by Transaction ID")
+    private Long transactionId;
+
     @Schema(description = "Filter by customer ID")
     private Integer customerId;
 
