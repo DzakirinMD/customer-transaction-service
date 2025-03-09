@@ -27,7 +27,12 @@ public class TransactionService {
         Sort.Direction direction = Sort.Direction.fromString(request.getSortDirection());
         Pageable pageable = PageRequest.of(request.getPageNumber() - 1, request.getPageSize(), Sort.by(direction, request.getSortField()));
 
-        Page<Transaction> transactionsPage = transactionRepository.findAll(pageable);
+        Page<Transaction> transactionsPage = transactionRepository.searchTransactions(
+                request.getCustomerId(),
+                request.getAccountNumber(),
+                request.getDescription(),
+                pageable
+        );
 
         List<TransactionResponse> transactionResponses = transactionsPage.getContent().stream()
                 .map(TransactionMapper::toDto)
@@ -43,12 +48,8 @@ public class TransactionService {
     }
 
     /**
-     *
      * @param id
-     * @param request
-     *
-     * Concurrency Handling for Updates
-     *
+     * @param request Concurrency Handling for Updates
      * @return
      */
     @Transactional
@@ -57,19 +58,7 @@ public class TransactionService {
                 .orElseThrow(() -> new RuntimeException("Transaction not found"));
 
         synchronized (existingTransaction) {
-            if (request.getAccountNumber() != null && !request.getAccountNumber().isBlank()) {
-                existingTransaction.setAccountNumber(request.getAccountNumber());
-            }
-            if (request.getCustomerId() != null) {
-                existingTransaction.setCustomerId(request.getCustomerId());
-            }
-            if (request.getDescription() != null && !request.getDescription().isBlank()) {
-                existingTransaction.setDescription(request.getDescription());
-            }
-            if (request.getTrxAmount() != null) {
-                existingTransaction.setTrxAmount(request.getTrxAmount());
-            }
-
+            existingTransaction.setDescription(request.getDescription().toUpperCase());
             transactionRepository.save(existingTransaction);
         }
 

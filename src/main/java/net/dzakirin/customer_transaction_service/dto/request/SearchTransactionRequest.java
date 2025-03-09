@@ -12,6 +12,15 @@ import javax.validation.constraints.Min;
 @AllArgsConstructor
 public class SearchTransactionRequest {
 
+    @Schema(description = "Filter by customer ID")
+    private Integer customerId;
+
+    @Schema(description = "Filter by account number")
+    private String accountNumber;
+
+    @Schema(description = "Filter by description (partial match)")
+    private String description;
+
     @Schema(defaultValue = "1", requiredMode = Schema.RequiredMode.REQUIRED)
     @Min(1)
     private int pageNumber;

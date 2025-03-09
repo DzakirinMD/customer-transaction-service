@@ -5,15 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
+import javax.validation.constraints.NotBlank;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateTransactionRequest {
-    private String accountNumber;
-    private Integer customerId;
+    @NotBlank
     private String description;
-    private BigDecimal trxAmount;
 }

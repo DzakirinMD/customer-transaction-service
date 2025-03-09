@@ -26,7 +26,7 @@ public class TransactionController {
         return ResponseEntity.ok(transactionService.getTransactions(searchTransactionRequest));
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<TransactionResponse> updateTransaction(
             @PathVariable Long id,
             @RequestBody UpdateTransactionRequest request
