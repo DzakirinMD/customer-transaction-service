@@ -1,0 +1,60 @@
+@startuml
+package "Controller Layer" {
+    class AuthController {
+        + login(username: String, password: String) : ResponseEntity
+    }
+    
+    class BatchController {
+        + startBatchJob() : ResponseEntity<String>
+    }
+    
+    class TransactionController {
+        + getTransactions(request: SearchTransactionRequest) : ResponseEntity
+        + updateTransaction(id: Long, request: UpdateTransactionRequest) : ResponseEntity
+    }
+}
+
+package "Service Layer" {
+    class TransactionService {
+        + getTransactions(request: SearchTransactionRequest) : BaseListResponse<TransactionResponse>
+        + updateTransaction(id: Long, request: UpdateTransactionRequest) : TransactionResponse
+    }
+
+    class CustomUserDetailsService {
+        + loadUserByUsername(username: String) : UserDetails
+    }
+
+    class JwtTokenUtil {
+        + generateToken(username: String) : String
+    }
+}
+
+package "Repository Layer" {
+    class TransactionRepository {
+        + searchTransactions(transactionId: Long, customerId: Integer, accountNumber: String, description: String, pageable: Pageable) : Page<Transaction>
+    }
+}
+
+package "Security" {
+    class JwtAuthFilter {
+        + doFilterInternal(request, response, chain)
+    }
+
+    class SecurityConfig {
+        + securityFilterChain(http: HttpSecurity)
+    }
+}
+
+package "Util" {
+    class TxtToCsvConverter {
+        + convertTxtToCsv()
+    }
+}
+
+AuthController --> JwtTokenUtil
+AuthController --> CustomUserDetailsService
+BatchController --> TxtToCsvConverter
+TransactionController --> TransactionService
+TransactionService --> TransactionRepository
+JwtAuthFilter --> SecurityConfig
+@enduml

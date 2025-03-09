@@ -1,5 +1,7 @@
 package net.dzakirin.customer_transaction_service.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import net.dzakirin.customer_transaction_service.security.JwtTokenUtil;
 import org.springframework.http.ResponseEntity;
@@ -15,12 +17,14 @@ import java.util.Map;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Tag(name = "Authentication", description = "APIs for user authentication and token management")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
     private final JwtTokenUtil jwtTokenUtil;
 
+    @Operation(summary = "Login", description = "Authenticate user and return JWT token.")
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestParam String username, @RequestParam String password) {
         try {

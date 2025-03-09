@@ -1,0 +1,16 @@
+@startuml
+start
+:User enters username & password;
+:AuthController receives login request;
+
+if (Are credentials valid?) then (Yes)
+    :Authenticate user via AuthenticationManager;
+    :Retrieve UserDetails from CustomUserDetailsService;
+    :Generate JWT Token via JwtTokenUtil;
+    :Return JWT token in response;
+else (No)
+    :Return 401 Unauthorized;
+endif
+
+stop
+@enduml
