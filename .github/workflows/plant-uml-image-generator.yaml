@@ -1,0 +1,23 @@
+name: Generate PlantUML Diagrams
+on: [push, pull_request]
+
+jobs:
+  generate-diagrams:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install PlantUML
+        run: sudo apt-get install plantuml
+
+      - name: Generate PNG diagrams
+        run: plantuml -tpng docs/*.puml
+
+      - name: Commit generated images
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/*.png
+          git commit -m "Auto-generate PlantUML diagrams" || echo "No changes to commit"
+          git push

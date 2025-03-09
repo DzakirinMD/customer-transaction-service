@@ -1,0 +1,16 @@
+@startuml
+start
+:User sends GET request with search filters;
+:TransactionController calls TransactionService;
+:TransactionService builds Pageable and Sort criteria;
+:TransactionService calls TransactionRepository.searchTransactions();
+
+if (Transactions found?) then (Yes)
+    :Convert to TransactionResponse;
+    :Return paginated results;
+else (No)
+    :Return empty list;
+endif
+
+stop
+@enduml
