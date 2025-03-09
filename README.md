@@ -25,10 +25,5 @@ You can connect to the **PostgreSQL database** using the following credentials:
 
 ### 4️⃣ Stop the Services
 ```sh
-docker-compose down
-```
-
-### 5️⃣ Reset the Environment
-```sh
-docker-compose down -v  # Removes volumes
+docker-compose down -v 
 ```
