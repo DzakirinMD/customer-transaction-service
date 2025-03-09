@@ -20,7 +20,7 @@ public class TxtToCsvConverter {
     private static final String OUTPUT_FILE = "src/main/resources/dataSource.csv";
 
     public static void convertTxtToCsv() {
-        try (Stream<String> linesStream = Files.lines(Paths.get(INPUT_FILE))) { // ✅ Try-with-resources
+        try (Stream<String> linesStream = Files.lines(Paths.get(INPUT_FILE))) {
             List<String> lines = linesStream
                     // Remove empty lines
                     .filter(line -> !line.trim().isEmpty())

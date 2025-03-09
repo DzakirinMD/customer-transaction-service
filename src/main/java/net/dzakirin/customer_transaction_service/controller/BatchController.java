@@ -1,6 +1,7 @@
 package net.dzakirin.customer_transaction_service.controller;
 
 import lombok.RequiredArgsConstructor;
+import net.dzakirin.customer_transaction_service.util.TxtToCsvConverter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -22,15 +23,18 @@ public class BatchController {
     @GetMapping("/start")
     public ResponseEntity<String> startBatchJob() {
         try {
+            TxtToCsvConverter.convertTxtToCsv();
+
             JobParameters jobParameters = new JobParametersBuilder()
-                .addLong("startTime", System.currentTimeMillis()) // Ensure a new execution every time
-                .toJobParameters();
+                    // Ensure a new execution every time
+                    .addLong("startTime", System.currentTimeMillis())
+                    .toJobParameters();
 
             jobLauncher.run(job, jobParameters);
             return ResponseEntity.ok("Batch job started successfully!");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Failed to start batch job: " + e.getMessage());
+                    .body("Failed to start batch job: " + e.getMessage());
         }
     }
 }
