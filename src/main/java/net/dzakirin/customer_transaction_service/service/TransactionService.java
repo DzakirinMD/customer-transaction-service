@@ -1,8 +1,17 @@
 package net.dzakirin.customer_transaction_service.service;
 
 import lombok.RequiredArgsConstructor;
+import net.dzakirin.customer_transaction_service.dto.request.SearchTransactionRequest;
+import net.dzakirin.customer_transaction_service.dto.request.UpdateTransactionRequest;
+import net.dzakirin.customer_transaction_service.dto.response.BaseListResponse;
+import net.dzakirin.customer_transaction_service.dto.response.TransactionResponse;
+import net.dzakirin.customer_transaction_service.mapper.TransactionMapper;
 import net.dzakirin.customer_transaction_service.model.Transaction;
 import net.dzakirin.customer_transaction_service.repository.TransactionRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -11,37 +20,59 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class TransactionService {
+
     private final TransactionRepository transactionRepository;
 
-    public List<Transaction> getTransactionsByCustomerId(String customerId) {
-        return transactionRepository.findByCustomerId(customerId);
-    }
+    public BaseListResponse<TransactionResponse> getTransactions(SearchTransactionRequest request) {
+        Sort.Direction direction = Sort.Direction.fromString(request.getSortDirection());
+        Pageable pageable = PageRequest.of(request.getPageNumber() - 1, request.getPageSize(), Sort.by(direction, request.getSortField()));
 
-    public List<Transaction> getTransactionsByAccountNumber(String accountNumber) {
-        return transactionRepository.findByAccountNumber(accountNumber);
-    }
+        Page<Transaction> transactionsPage = transactionRepository.findAll(pageable);
 
-    public List<Transaction> searchByDescription(String description) {
-        return transactionRepository.findByDescriptionContaining(description);
+        List<TransactionResponse> transactionResponses = transactionsPage.getContent().stream()
+                .map(TransactionMapper::toDto)
+                .toList();
+
+        return BaseListResponse.<TransactionResponse>builder()
+                .success(true)
+                .message("Transactions retrieved successfully")
+                .data(transactionResponses)
+                .totalRecords(transactionsPage.getTotalElements())
+                .totalPages(transactionsPage.getTotalPages())
+                .build();
     }
 
     /**
      *
      * @param id
-     * @param updatedTransaction
+     * @param request
      *
      * Concurrency Handling for Updates
      *
      * @return
      */
     @Transactional
-    public Transaction updateTransaction(Long id, Transaction updatedTransaction) {
+    public TransactionResponse updateTransaction(Long id, UpdateTransactionRequest request) {
         Transaction existingTransaction = transactionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Transaction not found"));
 
         synchronized (existingTransaction) {
-            existingTransaction.setDescription(updatedTransaction.getDescription());
-            return transactionRepository.save(existingTransaction);
+            if (request.getAccountNumber() != null && !request.getAccountNumber().isBlank()) {
+                existingTransaction.setAccountNumber(request.getAccountNumber());
+            }
+            if (request.getCustomerId() != null) {
+                existingTransaction.setCustomerId(request.getCustomerId());
+            }
+            if (request.getDescription() != null && !request.getDescription().isBlank()) {
+                existingTransaction.setDescription(request.getDescription());
+            }
+            if (request.getTrxAmount() != null) {
+                existingTransaction.setTrxAmount(request.getTrxAmount());
+            }
+
+            transactionRepository.save(existingTransaction);
         }
+
+        return TransactionMapper.toDto(existingTransaction);
     }
 }
